@@ -15,16 +15,12 @@ spec:
         release: "{{ .Release.Name }}"
       annotations:
         {{ if .Values.awsRole }}iam.amazonaws.com/role: {{ .Values.awsRole }}{{ end }}
-{{- if .Values.podAnnotations }}
-{{ toYaml .Values.annotations | indent 8 }}
-{{- end }}
     spec:
-      serviceAccountName: {{ if .Values.rbac.create }}{{ template "fluentd-cloudwatch.fullname" . }}{{ else }}"{{ .Values.rbac.serviceAccountName }}"{{ end }}
+      serviceAccountName: {{ template "fluentd-cloudwatch.fullname" . }}
       containers:
       - name: {{ template "fluentd-cloudwatch.fullname" . }}
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
-        imagePullPolicy: {{ .Values.imagePullPolicy | quote }}
-        #hostNetwork: {{ default false .Values.hostNetwork }}
+        imagePullPolicy: IfNotPresent
         env:
         - name: AWS_REGION
           value: {{ .Values.awsRegion }}
