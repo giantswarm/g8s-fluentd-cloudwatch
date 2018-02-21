@@ -26,7 +26,6 @@ spec:
           value: {{ .Values.awsRegion }}
         - name: LOG_GROUP_NAME
           value: {{ .Values.logGroupName }}
-{{- if not .Values.awsRole }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
@@ -37,7 +36,6 @@ spec:
             secretKeyRef:
               key: aws_secret_access_key
               name: {{ template "fluentd-cloudwatch.fullname" . }}
-{{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         volumeMounts:

@@ -10,9 +10,8 @@ resources:
     memory: 200Mi
 
 awsRegion: eu-central-1
-aws_access_key_id:
-aws_secret_access_key:
-awsRole:
+awsAccessKeyId:
+awsSecretAccessKey:
 logGroupName: kubernetes
 
 fluentdConfig: |
