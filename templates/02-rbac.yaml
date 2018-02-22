@@ -1,0 +1,45 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: {{ template "fluentd-cloudwatch.fullname" . }}
+  labels:
+    app: {{ template "fluentd-cloudwatch.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - podsecuritypolicies
+    verbs:
+      - use
+    resourceNames:
+      - privileged
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "fluentd-cloudwatch.fullname" . }}
+  labels:
+    app: {{ template "fluentd-cloudwatch.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "fluentd-cloudwatch.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ template "fluentd-cloudwatch.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
