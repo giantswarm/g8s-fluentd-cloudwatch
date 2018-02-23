@@ -1,0 +1,41 @@
+image: fluent/fluentd-kubernetes-daemonset
+imageTag: v0.12-alpine-cloudwatch
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 200Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi
+
+awsRegion: eu-central-1
+awsAccessKeyId:
+awsSecretAccessKey:
+logGroupName: kubernetes
+
+fluentdConfig: |
+  <match fluent.**>
+    type null
+  </match>
+
+  <source>
+    type tail
+    path /var/log/containers/*.log
+    pos_file /var/log/fluentd-containers.log.pos
+    time_format %Y-%m-%dT%H:%M:%S.%NZ
+    tag kubernetes.*
+    format json
+    read_from_head true
+  </source>
+
+  <filter kubernetes.**>
+    type kubernetes_metadata
+  </filter>
+
+  <match **>
+    type cloudwatch_logs
+    log_group_name "#{ENV['LOG_GROUP_NAME']}"
+    auto_create_stream true
+    use_tag_as_stream true
+  </match>
